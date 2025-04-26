@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld('electron', {
       }
     },
     invoke: (channel: string, data: any) => {
-      let validChannels = ["isPlaying", "game-ended"];
+      let validChannels = ["isPlaying", "game-ended", "minimize", "maxmize", "close"];
       if (validChannels.includes(channel)) {
         return ipcRenderer.invoke(channel, data);
       }

@@ -1,4 +1,5 @@
-let nickname = '';
+document.addEventListener("DOMContentLoaded", () => {
+    let nickname = '';
 let avatar = '';
 let roomId = "123";
 let data = ''
@@ -239,3 +240,4 @@ setInterval(() => {
         window.location.href = 'notgame.html';
     });
 }, 2000);
+})

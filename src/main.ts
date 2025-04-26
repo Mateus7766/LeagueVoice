@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session } from 'electron/main'
+import { app, BrowserWindow, session, ipcMain } from 'electron/main'
 import path from 'node:path'
 import LoL from "./LoL.js"
 
@@ -10,6 +10,7 @@ function createWindow() {
         width: 600,
         height: 400,
         resizable: false,
+        titleBarStyle: 'hidden',
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -31,6 +32,14 @@ app.whenReady().then(() => {
             callback(false);
         }
     });
+
+    ipcMain.handle("minimize", (event) =>
+        BrowserWindow.getFocusedWindow()?.minimize()
+    )
+    ipcMain.handle("close", (event) => BrowserWindow.getFocusedWindow()?.close());
+    ipcMain.handle("maxmize", (event) =>
+        !BrowserWindow.getFocusedWindow()?.isMaximized() ? BrowserWindow.getFocusedWindow()?.maximize() : BrowserWindow.getFocusedWindow()?.unmaximize()
+    );
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
