@@ -1,0 +1,45 @@
+import { app, BrowserWindow, session } from 'electron/main'
+import path from 'node:path'
+import LoL from "./LoL.js"
+
+
+function createWindow() {
+    const win = new BrowserWindow({
+        autoHideMenuBar: true,
+        width: 600,
+        height: 400,
+        resizable: false,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
+        }
+    })
+
+    win.loadFile('../public/NotGame.html')
+    LoL.Window = win
+}
+
+app.whenReady().then(() => {
+    createWindow()
+
+    session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+        if (permission === 'media') {
+            callback(true);
+        } else {
+            callback(false);
+        }
+    });
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow()
+        }
+    })
+})
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
+})

@@ -1,0 +1,29 @@
+{
+  "name": "leaguevoice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/electron": "^1.6.12",
+    "axios": "^1.9.0",
+    "electron": "^35.2.1",
+    "express": "^5.1.0",
+    "lcu-connector": "^2.1.4",
+    "socket.io": "^4.8.1",
+    "ws": "^8.18.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.2",
+    "@types/socket.io": "^3.0.2",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
