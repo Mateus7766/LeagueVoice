@@ -1,21 +1,15 @@
-const campeoes = [
-    { nome: "Ahri", img: "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/Ahri.png" },
-    { nome: "Garen", img: "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/Garen.png" },
-    { nome: "Lux", img: "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/Lux.png" },
-    { nome: "Yasuo", img: "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/Yasuo.png" },
-    { nome: "Zed", img: "https://ddragon.leagueoflegends.com/cdn/14.8.1/img/champion/Zed.png" }
-];
 
-const escolhido = campeoes[Math.floor(Math.random() * campeoes.length)];
-const nickname = escolhido.nome;
-const avatar = escolhido.img;
+
+let nickname = '';
+let avatar = '';
 let roomId = "123";
 let data = ''
 
-electron.ipcRenderer.invoke("isPlaying").then(gameData => {
+electron.ipcRenderer.invoke("isPlaying").then(async (gameData) => {
     const userpuuid = gameData.playerChampionSelections[0].puuid;
     data = gameData;
     const teamOne = gameData.teamOne;
+    const playerChampionSelections = gameData.playerChampionSelections;
     let team = 'two'
     for (player of teamOne) {
         if (player.puuid == userpuuid) {
@@ -23,6 +17,13 @@ electron.ipcRenderer.invoke("isPlaying").then(gameData => {
             break;
         }
     }
+    const chanpionsName = await (await fetch('https://ddragon.leagueoflegends.com/cdn/14.8.1/data/en_US/championFull.json')).json();
+
+    for (selection of playerChampionSelections) {
+        nickname = chanpionsName.keys[selection.championId];
+        avatar = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${selection.championId}.png`;
+    }
+
     roomId = gameData.gameId + '-' + team;
     const loader = document.getElementById('loader');
     if (loader) {
@@ -35,39 +36,41 @@ electron.ipcRenderer.invoke("isPlaying").then(gameData => {
 
 
 
-const socket = io("http://localhost:3000");
-const peers = {};
-const audioElements = {};
-const mutedPeers = {};
-let localStream;
-let isMuted = false;
-let globalMute = false;
-let localAudioAnalyser;
 
-document.getElementById("meu-usuario").innerHTML = `
+
+async function startVoice() {
+    const socket = io("http://localhost:3000");
+    const peers = {};
+    const audioElements = {};
+    const mutedPeers = {};
+    let localStream;
+    let isMuted = false;
+    let globalMute = false;
+    let localAudioAnalyser;
+
+    document.getElementById("meu-usuario").innerHTML = `
     <img src="${avatar}" class="champion-avatar" alt="${nickname}">
     <span>${nickname}</span>
   `;
 
-document.getElementById("mute-self-btn").addEventListener("click", () => {
-    isMuted = !isMuted;
-    localStream.getAudioTracks()[0].enabled = !isMuted;
-    document.getElementById("mute-self-btn").textContent = isMuted ? "🔊 Ativar meu microfone" : "🔇 Mutar meu microfone";
-});
+    document.getElementById("mute-self-btn").addEventListener("click", () => {
+        isMuted = !isMuted;
+        localStream.getAudioTracks()[0].enabled = !isMuted;
+        document.getElementById("mute-self-btn").textContent = isMuted ? "🔊 Ativar meu microfone" : "🔇 Mutar meu microfone";
+    });
 
-document.getElementById("mute-all-btn").addEventListener("click", () => {
-    globalMute = !globalMute;
-    Object.values(audioElements).forEach(audio => audio.muted = globalMute);
-    document.getElementById("mute-all-btn").textContent = globalMute ? "🔊 Ouvir todos novamente" : "🔈 Parar de ouvir todos";
-});
+    document.getElementById("mute-all-btn").addEventListener("click", () => {
+        globalMute = !globalMute;
+        Object.values(audioElements).forEach(audio => audio.muted = globalMute);
+        document.getElementById("mute-all-btn").textContent = globalMute ? "🔊 Ouvir todos novamente" : "🔈 Parar de ouvir todos";
+    });
 
-const led = document.getElementById("status-led");
-function setLedColor(color) {
-    led.style.backgroundColor = color;
-}
-
-async function startVoice() {
+    const led = document.getElementById("status-led");
+    function setLedColor(color) {
+        led.style.backgroundColor = color;
+    }
     try {
+
         localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         setLedColor("orange");
 
