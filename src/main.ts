@@ -5,6 +5,7 @@ import LoL from "./LoL.js"
 
 function createWindow() {
     const win = new BrowserWindow({
+        icon: path.join(__dirname, '../images/logo.png'),
         autoHideMenuBar: true,
         width: 600,
         height: 400,
@@ -15,7 +16,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js')
         }
     })
-
+    
     win.loadFile('../public/NotGame.html')
     LoL.Window = win
 }

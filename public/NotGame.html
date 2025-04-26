@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>LeagueVoice</title>
+  <title>NexusVoice</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -16,7 +16,6 @@
     }
 
     #not-open {
-      display: none;
       background-color: #292929;
       padding: 40px;
       border-radius: 12px;
@@ -42,24 +41,9 @@
 
   <div id="not-open">
     <h1>League of Legends não está aberto.</h1>
-    <p>Aguardando o jogo iniciar para habilitar o LeagueVoice.</p>
+    <p>Aguardando o jogo iniciar para habilitar o NexusVoice.</p>
   </div>
-
-  <script>
-    window.electron.ipcRenderer.on('champ-select-entered', (event) => {
-        window.location.href = 'index.html';
-    });
-    window.electron.ipcRenderer.on('league-open', async (event) => {
-      console.log("League of Legends aberto.");
-      const el = document.getElementById('not-open');
-      el.innerHTML = `
-        <h1>League of Legends detectado!</h1>
-        <p>${event.username}, inicie uma partida para usar o <strong>LeagueVoice</strong>.</p>
-      `;
-      el.style.display = 'block';
-      
-    });
-  </script>
+<script src="./js/notgame.js"></script>
 
 </body>
 </html>
