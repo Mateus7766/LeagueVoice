@@ -1,5 +1,3 @@
-
-
 let nickname = '';
 let avatar = '';
 let roomId = "123";
@@ -17,6 +15,7 @@ electron.ipcRenderer.invoke("isPlaying").then(async (gameData) => {
             break;
         }
     }
+
     const chanpionsName = await (await fetch('https://ddragon.leagueoflegends.com/cdn/14.8.1/data/en_US/championFull.json')).json();
 
     for (selection of playerChampionSelections) {
@@ -32,6 +31,7 @@ electron.ipcRenderer.invoke("isPlaying").then(async (gameData) => {
     startVoice();
 }).catch(err => {
     console.log("Erro ao acessar o jogo:", err);
+    window.location.href = 'notgame.html';
 });
 
 
@@ -226,5 +226,16 @@ function createPeerConnection(peerId, isInitiator) {
             if (report.type === "inbound-rtp" && report.kind === "audio" && report.packetsReceived > 0) receiving = true;
         });
         setLedColor(sending && receiving ? "green" : "red");
-    }, 2000);
+    }, 1000);
 }
+
+setInterval(() => {
+    electron.ipcRenderer.invoke("isPlaying").then((gameData) => {
+        if (gameData.gameId !== data.gameId) {
+            window.location.href = 'notgame.html';
+        }
+    })
+    .catch(err => {
+        window.location.href = 'notgame.html';
+    });
+}, 2000);

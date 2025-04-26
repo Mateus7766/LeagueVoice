@@ -82,25 +82,30 @@ class LoL {
 
                 if (
                     Array.isArray(message) &&
-                    message[2]?.uri === "/lol-gameflow/v1/session" &&
-                    (message[2]?.data as GameflowSession)?.phase === "InProgress"
-                ) {
-                    const gameData = (message[2]?.data as any).gameData;
-                    const teamOne = gameData.teamOne as any[]
-                    const teamTwo = gameData.teamTwo as any[]
-
-                    const user = await this.getCurrentSummoner();
-                    let team = 'two'
-
-                    teamOne.forEach((player) => {
+                    message[2]?.uri === "/lol-gameflow/v1/session"
+                  ) {
+                    const session = message[2]?.data as GameflowSession;
+                  
+                    if (session.phase === "InProgress") {
+                      const gameData = (session as any).gameData;
+                      const teamOne = gameData.teamOne as any[];
+                  
+                      const user = await this.getCurrentSummoner();
+                      let team = 'two';
+                  
+                      teamOne.forEach((player) => {
                         if (player.puuid == user.puuid) {
-                            team = 'one'
-                            return
+                          team = 'one';
                         }
-                    })
-
-                    this.onEnterChampSelect(`${gameData.gameId}-${team}`);
-                }
+                      });
+                  
+                      this.onEnterChampSelect(`${gameData.gameId}-${team}`);
+                    } 
+                    else {
+                      console.log("A partida acabou!");
+                      this.onGameEnd();
+                    }
+                  }                  
             } catch (err) {
                 console.error("Erro ao processar evento do WebSocket");
             }
@@ -134,8 +139,14 @@ class LoL {
         }
         return null;
     }
+
+    private onGameEnd() {
+        console.log("A partida acabou!");
+        this.window?.webContents.send("game-ended");
+    }
+
     private onEnterChampSelect(roomId: string) {
-        console.log("Entrou na Champ Select!");
+        console.log("A partida iniciou!");
         this.window?.webContents.send("champ-select-entered", { roomId });
     }
 }
