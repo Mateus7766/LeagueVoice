@@ -17,7 +17,7 @@
 </p>
 <h1 align="center">
  <br>
-  <img src="./.github/images/nexusvoice3.png" alt="NexusVoice">
+  <img src="./.github/images/nexusvoice4.png" alt="NexusVoice">
   <br>
 </h1>
 
